@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <!-- Div for render from react -->
+    <div id="root"></div>
+
+    <div style="text-align: end; margin-top:50px ;">
+        <button onclick="location.href='./history.html'" type="button" style="background-color: gray;">
+            View History
+        </button>
+    </div>
+
+
+    <script type="text/babel">
+
+        // using Localstorage to store previous time 
+        if(!localStorage.getItem("Time")){
+            const TimeHistory = []
+            localStorage.setItem('Time', JSON.stringify(TimeHistory) );
+        }
+
+        const TimeHistory = JSON.parse(localStorage.getItem("Time"));
+            
+        // react function to render the component.
+        const App = () => {
+            const [time, setTime] = React.useState(0);
+            const [timerOn, setTimerOn] = React.useState(false);
+
+            // function to save the history of timer in Localstorage
+            function saveHistory() {
+                TimeHistory.push(time)
+                // console.log(TimeHistory)
+                localStorage.setItem('Time', JSON.stringify(TimeHistory));
+
+            }
+        
+            React.useEffect(() => {
+                let interval = null;
+
+                //Running the timer.
+                if (timerOn) {
+                    interval = setInterval(() => {
+                        setTime((prevTime) => prevTime + 10);
+                    }, 10);
+                } else if (!timerOn) {
+                    clearInterval(interval);
+                }
+
+                return () => clearInterval(interval);
+            }, [timerOn]);
+
+            return (
+                // returning the html component to shows up at screen.
+                <div className="Timers">
+                    <h1>Stopwatch</h1>
+                    <div id="display">
+                        <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+                        <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}:</span>
+                        <span>{("0" + ((time / 10) % 100)).slice(-2)}</span>
+                    </div>
+
+                    <div id="buttons">
+                        {!timerOn && time === 0 && (
+                            <button onClick={() => { setTimerOn(true); saveHistory() }}>Start</button>
+                        )}
+                        {timerOn && <button onClick={() => { setTimerOn(false); saveHistory() }}>Stop</button>}
+                        {!timerOn && time > 0 && (
+                            <button onClick={() => setTime(0)}>Reset</button>
+                        )}
+                        {!timerOn && time > 0 && (
+                            <button onClick={() => setTimerOn(true)}>Resume</button>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+
+        ReactDOM.render(<App />,
+            document.getElementById("root"))
+    </script>
+
+</body>
+
+</html>

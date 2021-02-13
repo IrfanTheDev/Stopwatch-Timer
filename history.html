@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+   
+</head>
+
+<body>
+    <div class="Timers">
+        <h1>Stopwatch History.</h1>
+    </div>
+
+    <div id="root2" class="Timers"></div>
+
+    <div style="text-align: end; margin-top:50px ;">
+        <button onclick="clearHistory()" type="button" >
+            Clear History
+        </button>
+        <button onclick="location.href='./index.html'" type="button" style="background-color: gray;">
+             Back to Stopwatch
+        </button>
+    </div>
+    
+
+
+    <script type="text/babel">
+
+        //to Clear the local storage.
+        function clearHistory(){
+            localStorage.removeItem("Time");
+            location.href = location.href='./index.html'   
+        }        
+
+        const App2 = () => {
+            
+            // Getting the timer history from localstorage
+            const timeHis = JSON.parse(localStorage.getItem("Time"));
+
+            // console.log(timeHis)
+
+            return (
+                // showing the timer history on Page.
+                <div>
+                    {timeHis.map((item,index) => 
+                            <div id="display" key={index}>
+                                <span>{("0" + Math.floor((item / 60000) % 60)).slice(-2)}:</span>
+                                <span>{("0" + Math.floor((item / 1000) % 60)).slice(-2)}:</span>
+                                <span>{("0" + ((item / 10) % 100)).slice(-2)}</span>
+                            </div>
+                    )}
+                    
+                </div>
+            );
+        };
+
+
+       
+
+        ReactDOM.render(<App2 />,
+            document.getElementById("root2"))
+
+    </script>
+
+   
+</body>
+
+</html>
